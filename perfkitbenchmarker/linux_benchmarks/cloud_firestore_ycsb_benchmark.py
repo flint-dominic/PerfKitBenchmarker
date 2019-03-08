@@ -49,7 +49,7 @@ PRIVATE_KEYFILE_DIR = '/tmp/key.p12'
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string('google_firestore_keyfile',
-                    None,
+                    'serviceAccountKey.json',
                     'The path to Google API P12 private key file')
 flags.DEFINE_string('google_firestore_datasetId',
                     None,
