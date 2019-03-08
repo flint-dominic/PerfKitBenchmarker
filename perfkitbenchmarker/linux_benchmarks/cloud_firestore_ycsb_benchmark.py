@@ -45,24 +45,16 @@ cloud_firestore_ycsb:
       vm_spec: *default_single_core
       vm_count: 1"""
 
-YCSB_BINDING_TAR_URL = ('https://github.com/brianfrankcooper/YCSB/releases'
-                        '/download/0.9.0/'
-                        'ycsb-googlefirestore-binding-0.9.0.tar.gz')
-YCSB_BINDING_LIB_DIR = posixpath.join(ycsb.YCSB_DIR, 'lib')
 PRIVATE_KEYFILE_DIR = '/tmp/key.p12'
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string('google_datastore_keyfile',
+flags.DEFINE_string('google_firestore_keyfile',
                     None,
                     'The path to Google API P12 private key file')
-flags.DEFINE_string('google_datastore_serviceAccount',
+flags.DEFINE_string('google_firestore_datasetId',
                     None,
-                    'The service account email associated with'
-                    'datastore private key file')
-flags.DEFINE_string('google_datastore_datasetId',
-                    None,
-                    'The project ID that has Cloud Datastore service')
-flags.DEFINE_string('google_datastore_debug',
+                    'The project ID that has Cloud Firestore service')
+flags.DEFINE_string('google_firestore_debug',
                     'false',
                     'The logging level when running YCSB')
 
@@ -75,41 +67,33 @@ def GetConfig(user_config):
 
 
 def CheckPrerequisites(benchmark_config):
-  # Before YCSB Cloud Datastore supports Application Default Credential,
+  # Before YCSB Cloud Firestore supports Application Default Credential,
   # we should always make sure valid credential flags are set.
-  if not FLAGS.google_datastore_keyfile:
-    raise ValueError('"google_datastore_keyfile" must be set')
-  if not FLAGS.google_datastore_serviceAccount:
-    raise ValueError('"google_datastore_serviceAccount" must be set')
-  if not FLAGS.google_datastore_datasetId:
-    raise ValueError('"google_datastore_datasetId" must be set ')
+  if not FLAGS.google_firestore_keyfile:
+    raise ValueError('"google_firestore_keyfile" must be set')
+  if not FLAGS.google_firestore_serviceAccount:
+    raise ValueError('"google_firestore_serviceAccount" must be set')
+  if not FLAGS.google_firestore_datasetId:
+    raise ValueError('"google_firestore_datasetId" must be set ')
 
 
 def Prepare(benchmark_spec):
   benchmark_spec.always_call_cleanup = True
-  default_ycsb_tar_url = ycsb.YCSB_TAR_URL
   vms = benchmark_spec.vms
 
-  # TODO: figure out a less hacky way to override.
-  # Override so that we only need to download the required binding.
-  ycsb.YCSB_TAR_URL = YCSB_BINDING_TAR_URL
 
   # Install required packages and copy credential files
   vm_util.RunThreaded(_Install, vms)
 
-  # Restore YCSB_TAR_URL
-  ycsb.YCSB_TAR_URL = default_ycsb_tar_url
-  benchmark_spec.executor = ycsb.YCSBExecutor('googledatastore')
+  benchmark_spec.executor = ycsb.YCSBExecutor('googlefirestore')
 
 
 def Run(benchmark_spec):
   vms = benchmark_spec.vms
   run_kwargs = {
-      'googledatastore.datasetId': FLAGS.google_datastore_datasetId,
-      'googledatastore.privateKeyFile': PRIVATE_KEYFILE_DIR,
-      'googledatastore.serviceAccountEmail':
-        FLAGS.google_datastore_serviceAccount,
-      'googledatastore.debug': FLAGS.google_datastore_debug,
+      'googlefirestore.datasetId': FLAGS.google_firestore_datasetId,
+      'googlefirestore.serviceAccountKey': PRIVATE_KEYFILE_DIR,
+      'googlefirestore.debug': FLAGS.google_firestore_debug,
   }
   load_kwargs = run_kwargs.copy()
   if FLAGS['ycsb_preload_threads'].present:
@@ -129,4 +113,4 @@ def _Install(vm):
   vm.Install('ycsb')
 
   # Copy private key file to VM
-  vm.RemoteCopy(FLAGS.google_datastore_keyfile, PRIVATE_KEYFILE_DIR)
+  vm.RemoteCopy(FLAGS.google_firestore_keyfile, PRIVATE_KEYFILE_DIR)
