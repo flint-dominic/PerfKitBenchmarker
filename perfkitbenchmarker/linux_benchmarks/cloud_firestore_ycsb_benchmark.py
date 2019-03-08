@@ -71,10 +71,6 @@ def CheckPrerequisites(benchmark_config):
   # we should always make sure valid credential flags are set.
   if not FLAGS.google_firestore_keyfile:
     raise ValueError('"google_firestore_keyfile" must be set')
-  if not FLAGS.google_firestore_serviceAccount:
-    raise ValueError('"google_firestore_serviceAccount" must be set')
-  if not FLAGS.google_firestore_datasetId:
-    raise ValueError('"google_firestore_datasetId" must be set ')
 
 
 def Prepare(benchmark_spec):
