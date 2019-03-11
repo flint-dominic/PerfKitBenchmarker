@@ -51,9 +51,6 @@ FLAGS = flags.FLAGS
 flags.DEFINE_string('google_firestore_keyfile',
                     'serviceAccountKey.json',
                     'The path to Google API P12 private key file')
-flags.DEFINE_string('google_firestore_datasetId',
-                    None,
-                    'The project ID that has Cloud Firestore service')
 flags.DEFINE_string('google_firestore_debug',
                     'false',
                     'The logging level when running YCSB')
@@ -77,7 +74,6 @@ def Prepare(benchmark_spec):
   benchmark_spec.always_call_cleanup = True
   vms = benchmark_spec.vms
 
-
   # Install required packages and copy credential files
   vm_util.RunThreaded(_Install, vms)
 
@@ -87,7 +83,6 @@ def Prepare(benchmark_spec):
 def Run(benchmark_spec):
   vms = benchmark_spec.vms
   run_kwargs = {
-      'googlefirestore.datasetId': FLAGS.google_firestore_datasetId,
       'googlefirestore.serviceAccountKey': PRIVATE_KEYFILE_DIR,
       'googlefirestore.debug': FLAGS.google_firestore_debug,
   }
