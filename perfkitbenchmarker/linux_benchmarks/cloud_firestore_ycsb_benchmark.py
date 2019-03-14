@@ -38,13 +38,14 @@ BENCHMARK_NAME = 'cloud_firestore_ycsb'
 BENCHMARK_CONFIG = """
 cloud_firestore_ycsb:
   description: >
-      Run YCSB agains Google Cloud Firestore.
+      Run YCSB against Google Cloud Firestore.
       Configure the number of VMs via --num-vms.
   vm_groups:
     default:
       vm_spec: *default_single_core
       vm_count: 1"""
 
+YCSB_BINDING_LIB_DIR = posixpath.join(ycsb.YCSB_DIR, 'lib')
 PRIVATE_KEYFILE_DIR = '/tmp/key.p12'
 
 FLAGS = flags.FLAGS
@@ -64,8 +65,6 @@ def GetConfig(user_config):
 
 
 def CheckPrerequisites(benchmark_config):
-  # Before YCSB Cloud Firestore supports Application Default Credential,
-  # we should always make sure valid credential flags are set.
   if not FLAGS.google_firestore_keyfile:
     raise ValueError('"google_firestore_keyfile" must be set')
 
