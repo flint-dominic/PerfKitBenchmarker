@@ -100,7 +100,6 @@ def Cleanup(benchmark_spec):
 
 def _Install(vm):
   vm.Install('ycsb')
-  vm.Install('python')
 
   # Copy private key file to VM
   vm.RemoteCopy(FLAGS.google_firestore_keyfile, PRIVATE_KEYFILE_DIR)
