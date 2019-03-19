@@ -38,7 +38,11 @@ BENCHMARK_NAME = 'cloud_firestore_ycsb'
 BENCHMARK_CONFIG = """
 cloud_firestore_ycsb:
   description: >
-      Run YCSB against Google Cloud Firestore. """
+      Run YCSB against Google Cloud Firestore. 
+  vm_groups:
+    default:
+      vm_spec: *default_single_core
+      vm_count: 1"""
 
 YCSB_BINDING_LIB_DIR = posixpath.join(ycsb.YCSB_DIR, 'lib')
 PRIVATE_KEYFILE_DIR = '/tmp/key.p12'
