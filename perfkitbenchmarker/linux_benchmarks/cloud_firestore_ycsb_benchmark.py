@@ -38,12 +38,7 @@ BENCHMARK_NAME = 'cloud_firestore_ycsb'
 BENCHMARK_CONFIG = """
 cloud_firestore_ycsb:
   description: >
-      Run YCSB against Google Cloud Firestore.
-      Configure the number of VMs via --num-vms.
-  vm_groups:
-    default:
-      vm_spec: *default_single_core
-      vm_count: 1"""
+      Run YCSB against Google Cloud Firestore. """
 
 YCSB_BINDING_LIB_DIR = posixpath.join(ycsb.YCSB_DIR, 'lib')
 PRIVATE_KEYFILE_DIR = '/tmp/key.p12'
@@ -101,6 +96,7 @@ def Cleanup(benchmark_spec):
 
 def _Install(vm):
   vm.Install('ycsb')
+  vm.Install('python')
 
   # Copy private key file to VM
   vm.RemoteCopy(FLAGS.google_firestore_keyfile, PRIVATE_KEYFILE_DIR)
