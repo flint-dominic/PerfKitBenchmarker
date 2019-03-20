@@ -16,7 +16,7 @@
 
 Before running this benchmark, you have to download your P12
 service account private key file to local machine, and pass the path
-via 'google_datastore_keyfile' parameters to PKB.
+via 'google_firestore_keyfile' parameters to PKB.
 
 Service Account email associated with the key file is also needed to
 pass to PKB.
