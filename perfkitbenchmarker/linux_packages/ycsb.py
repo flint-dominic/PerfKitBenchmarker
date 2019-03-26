@@ -95,7 +95,7 @@ AGGREGATE_OPERATORS = {
 
 
 flags.DEFINE_string('ycsb_version', '0.9.0', 'YCSB version to use. Defaults to '
-                    'version 0.9.0.')
+                                             'version 0.9.0.')
 flags.DEFINE_enum('ycsb_measurement_type', HISTOGRAM,
                   YCSB_MEASUREMENT_TYPES,
                   'Measurement type to use for ycsb. Defaults to histogram.')
@@ -103,10 +103,10 @@ flags.DEFINE_enum('ycsb_measurement_interval', 'op',
                   ['op', 'intended', 'both'],
                   'Measurement interval to use for ycsb. Defaults to op.')
 flags.DEFINE_boolean('ycsb_histogram', False, 'Include individual '
-                     'histogram results from YCSB (will increase sample '
-                     'count).')
+                                              'histogram results from YCSB (will increase sample '
+                                              'count).')
 flags.DEFINE_boolean('ycsb_load_samples', True, 'Include samples '
-                     'from pre-populating database.')
+                                                'from pre-populating database.')
 flags.DEFINE_boolean('ycsb_include_individual_results', False,
                      'Include results from each client VM, rather than just '
                      'combined results.')
@@ -125,25 +125,25 @@ flags.DEFINE_list('ycsb_run_parameters', [],
                   'Passed to YCSB during the load stage. Comma-separated list '
                   'of "key=value" pairs.')
 flags.DEFINE_list('ycsb_threads_per_client', ['32'], 'Number of threads per '
-                  'loader during the benchmark run. Specify a list to vary the '
-                  'number of clients.')
+                                                     'loader during the benchmark run. Specify a list to vary the '
+                                                     'number of clients.')
 flags.DEFINE_integer('ycsb_preload_threads', None, 'Number of threads per '
-                     'loader during the initial data population stage. '
-                     'Default value depends on the target DB.')
+                                                   'loader during the initial data population stage. '
+                                                   'Default value depends on the target DB.')
 flags.DEFINE_integer('ycsb_record_count', None, 'Pre-load with a total '
-                     'dataset of records total. Overrides recordcount value in '
-                     'all workloads of this run. Defaults to None, where '
-                     'recordcount value in each workload is used. If neither '
-                     'is not set, ycsb default of 0 is used.')
+                                                'dataset of records total. Overrides recordcount value in '
+                                                'all workloads of this run. Defaults to None, where '
+                                                'recordcount value in each workload is used. If neither '
+                                                'is not set, ycsb default of 0 is used.')
 flags.DEFINE_integer('ycsb_operation_count', None, 'Number of operations '
-                     '*per client VM*.')
+                                                   '*per client VM*.')
 flags.DEFINE_integer('ycsb_timelimit', 1800, 'Maximum amount of time to run '
-                     'each workload / client count combination. Set to 0 for '
-                     'unlimited time.')
+                                             'each workload / client count combination. Set to 0 for '
+                                             'unlimited time.')
 flags.DEFINE_integer('ycsb_field_count', None, 'Number of fields in a record. '
-                     'Defaults to None which uses the ycsb default of 10.')
+                                               'Defaults to None which uses the ycsb default of 10.')
 flags.DEFINE_integer('ycsb_field_length', None, 'Size of each field. Defaults '
-                     'to None which uses the ycsb default of 100.')
+                                                'to None which uses the ycsb default of 100.')
 flags.DEFINE_enum('ycsb_requestdistribution',
                   None, ['uniform', 'zipfian', 'latest'],
                   'Type of request distribution.  '
@@ -223,7 +223,7 @@ def _Install(vm):
     vm.RemoteCommand('cd {0}; _JAVA_OPTIONS=-Djdk.net.URLClassPath.'
                      'disableClassPathURLCheck=true  '
                      'mvn install > /dev/null 2>&1'.format(
-                         HDRHISTOGRAM_DIR))
+        HDRHISTOGRAM_DIR))
 
 
 def YumInstall(vm):

@@ -50,10 +50,13 @@ PRIVATE_KEYFILE_DIR = '/tmp/key.p12'
 FLAGS = flags.FLAGS
 flags.DEFINE_string('google_firestore_keyfile',
                     'serviceAccountKey.json',
-                    'The path to Google API P12 private key file')
+                    'The path to Google API P12 private key file.')
+flags.DEFINE_string('google_firestore_projectid',
+                    'firestore-benchmark-tests',
+                    'Google Project with firestore instance.')
 flags.DEFINE_string('google_firestore_debug',
                     'false',
-                    'The logging level when running YCSB')
+                    'The logging level when running YCSB.')
 
 
 def GetConfig(user_config):
@@ -82,7 +85,11 @@ def Run(benchmark_spec):
   vms = benchmark_spec.vms
   run_kwargs = {
       'googlefirestore.serviceAccountKey': PRIVATE_KEYFILE_DIR,
+      'googlefirestore.projectId': FLAGS.google_firestore_projectid,
       'googlefirestore.debug': FLAGS.google_firestore_debug,
+      'table': 'pkb-{0}'.format(FLAGS.run_uri),
+      'writeallfields': 'true',
+      'readallfields': 'true',
   }
   load_kwargs = run_kwargs.copy()
   if FLAGS['ycsb_preload_threads'].present:
