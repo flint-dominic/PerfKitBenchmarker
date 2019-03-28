@@ -209,7 +209,7 @@ def _Install(vm):
   vm.Install('openjdk')
   vm.Install('curl')
   ycsb_url = ('https://github.com/flint-dominic/python_scripts/releases/'
-              'download/0.01/ycsb-0.12.1.fs.tar.gz')
+              'download/0.01/ycsb-0.16.0.tar.gz')
   # ycsb_url = ('https://github.com/brianfrankcooper/YCSB/releases/'
   #             'download/{0}/ycsb-{0}.tar.gz').format(FLAGS.ycsb_version)
   install_cmd = ('mkdir -p {0} && curl -L {1} | '
