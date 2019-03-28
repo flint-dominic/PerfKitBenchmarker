@@ -88,8 +88,6 @@ def Run(benchmark_spec):
       'googlefirestore.projectId': FLAGS.google_firestore_projectid,
       'googlefirestore.debug': FLAGS.google_firestore_debug,
       'table': 'pkb-{0}'.format(FLAGS.run_uri),
-      'writeallfields': 'true',
-      'readallfields': 'true',
   }
   load_kwargs = run_kwargs.copy()
   if FLAGS['ycsb_preload_threads'].present:
