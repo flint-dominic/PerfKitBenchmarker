@@ -24,6 +24,7 @@
 - Changed TF Serving benchmark to use ResNet instead of Inception
 
 ### New features:
+- YCSB benchmark for Firestore in GCP.
 - Windows benchmarks can now be run from linux controllers.
 - MXNet benchmarks can now be run from linux controllers.
 - Added initial support for preprovisioning benchmark binaries in the cloud,

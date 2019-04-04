@@ -22,7 +22,6 @@ By default, this benchmark provision 1 single-CPU VM and spawn 1 thread
 to test Firestore.
 """
 
-import posixpath
 import logging
 
 from perfkitbenchmarker import configs
@@ -41,7 +40,6 @@ cloud_firestore_ycsb:
       vm_spec: *default_single_core
       vm_count: 1"""
 
-YCSB_BINDING_LIB_DIR = posixpath.join(ycsb.YCSB_DIR, 'lib')
 PRIVATE_KEYFILE_DIR = '/tmp/service_key.JSON'
 
 FLAGS = flags.FLAGS
