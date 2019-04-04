@@ -42,7 +42,7 @@ cloud_firestore_ycsb:
       vm_count: 1"""
 
 YCSB_BINDING_LIB_DIR = posixpath.join(ycsb.YCSB_DIR, 'lib')
-PRIVATE_KEYFILE_DIR = '/tmp/svckey.JSON'
+PRIVATE_KEYFILE_DIR = '/tmp/service_key.JSON'
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string('google_firestore_keyfile',
@@ -50,7 +50,7 @@ flags.DEFINE_string('google_firestore_keyfile',
                     'The path to Google API JSON private key file.')
 flags.DEFINE_string('google_firestore_projectid',
                     'firestore-benchmark-tests',
-                    'Google Project with firestore instance.')
+                    'Google Project ID with firestore instance.')
 flags.DEFINE_string('google_firestore_debug',
                     'false',
                     'The logging level when running YCSB.')
@@ -64,11 +64,20 @@ def GetConfig(user_config):
 
 
 def CheckPrerequisites(benchmark_config):
+  """Verifies that the required resources are present.
+  Raises:
+  perfkitbenchmarker.data.ResourceNotFound: On missing resource.
+  """
   if not FLAGS.google_firestore_keyfile:
     raise ValueError('"google_firestore_keyfile" must be set')
 
 
 def Prepare(benchmark_spec):
+  """Install YCSB on the target vm.
+  Args:
+  benchmark_spec: The benchmark specification. Contains all data that is
+      required to run the benchmark.
+  """
   benchmark_spec.always_call_cleanup = True
   vms = benchmark_spec.vms
 
@@ -79,6 +88,13 @@ def Prepare(benchmark_spec):
 
 
 def Run(benchmark_spec):
+  """Run YCSB on the target vm.
+  Args:
+  benchmark_spec: The benchmark specification. Contains all data that is
+  required to run the benchmark.
+  Returns:
+  A list of sample.Sample objects.
+  """
   vms = benchmark_spec.vms
   run_kwargs = {
       'googlefirestore.serviceAccountKey': PRIVATE_KEYFILE_DIR,
@@ -95,13 +111,17 @@ def Run(benchmark_spec):
 
 
 def Cleanup(benchmark_spec):
-  # TODO: support automatic cleanup.
+  """Cleanup YCSB on the target vm.
+  Args:
+  benchmark_spec: The benchmark specification. Contains all data that is
+  required to run the benchmark.
+  TODO: support automatic cleanup.
+  """
   logging.warning(
-      "For now, we can only manually delete all the entries via GCP portal.")
+      'For now, we can only manually delete all the entries via GCP portal.')
 
 
 def _Install(vm):
+  """Install YCSB on client 'vm', and copy private key."""
   vm.Install('ycsb')
-
-  # Copy private key file to VM
   vm.RemoteCopy(FLAGS.google_firestore_keyfile, PRIVATE_KEYFILE_DIR)
