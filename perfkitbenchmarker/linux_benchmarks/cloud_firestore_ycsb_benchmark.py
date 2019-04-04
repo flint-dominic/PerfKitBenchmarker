@@ -14,12 +14,9 @@
 
 """Run YCSB benchmark against Google Cloud Firestore
 
-Before running this benchmark, you have to download your P12
+Before running this benchmark, you have to download your JSON
 service account private key file to local machine, and pass the path
 via 'google_firestore_keyfile' parameters to PKB.
-
-Service Account email associated with the key file is also needed to
-pass to PKB.
 
 By default, this benchmark provision 1 single-CPU VM and spawn 1 thread
 to test Firestore.
@@ -45,12 +42,12 @@ cloud_firestore_ycsb:
       vm_count: 1"""
 
 YCSB_BINDING_LIB_DIR = posixpath.join(ycsb.YCSB_DIR, 'lib')
-PRIVATE_KEYFILE_DIR = '/tmp/key.p12'
+PRIVATE_KEYFILE_DIR = '/tmp/svckey.JSON'
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string('google_firestore_keyfile',
                     'serviceAccountKey.json',
-                    'The path to Google API P12 private key file.')
+                    'The path to Google API JSON private key file.')
 flags.DEFINE_string('google_firestore_projectid',
                     'firestore-benchmark-tests',
                     'Google Project with firestore instance.')
