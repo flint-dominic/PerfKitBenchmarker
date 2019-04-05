@@ -13,7 +13,7 @@
 # limitations under the License.
 """Module containing class for GCP's firestore instances.
 
-Clusters can be created and deleted.
+Collections can be created and deleted.
 """
 
 import json
