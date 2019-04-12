@@ -25,7 +25,7 @@ from perfkitbenchmarker.providers.gcp import util
 from google.cloud import firestore
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string('google_firestore_projectid',
+flags.DEFINE_string('cloud_firestore_projectid',
                     'firestore-benchmark-tests',
                     'Google Project ID with firestore instance.')
 

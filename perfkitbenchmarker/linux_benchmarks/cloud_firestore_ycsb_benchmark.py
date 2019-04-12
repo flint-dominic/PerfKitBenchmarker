@@ -96,7 +96,7 @@ def Run(benchmark_spec):
   vms = benchmark_spec.vms
   run_kwargs = {
       'googlefirestore.serviceAccountKey': PRIVATE_KEYFILE_DIR,
-      'googlefirestore.projectId': FLAGS.cloud_firestore_ycsb_projectid,
+      'googlefirestore.projectId': FLAGS.cloud_firestore_projectid,
       'googlefirestore.debug': FLAGS.cloud_firestore_ycsb_debug,
       'table': 'pkb-{0}'.format(FLAGS.run_uri),
   }
