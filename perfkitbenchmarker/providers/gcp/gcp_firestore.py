@@ -22,8 +22,16 @@ import logging
 from perfkitbenchmarker import flags
 from perfkitbenchmarker import resource
 from perfkitbenchmarker.providers.gcp import util
+from google.cloud import firestore
 
 FLAGS = flags.FLAGS
+flags.DEFINE_string('google_firestore_projectid',
+                    'firestore-benchmark-tests',
+                    'Google Project ID with firestore instance.')
+
+db = firestore.Client(project='random', credentials='random', database='random')
+db.collection(u'pkb-run').document(u'user-random').delete()
+
 
 
 class GcpFirestoreInstance(resource.BaseResource):

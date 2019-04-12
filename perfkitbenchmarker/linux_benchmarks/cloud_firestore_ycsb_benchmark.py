@@ -16,7 +16,7 @@
 
 Before running this benchmark, you have to download your JSON
 service account private key file to local machine, and pass the path
-via 'google_firestore_keyfile' parameters to PKB.
+via 'cloud_firestore_ycsb_keyfile' parameters to PKB.
 
 By default, this benchmark provision 1 single-CPU VM and spawn 1 thread
 to test Firestore.
@@ -43,13 +43,13 @@ cloud_firestore_ycsb:
 PRIVATE_KEYFILE_DIR = '/tmp/service_key.JSON'
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string('google_firestore_keyfile',
+flags.DEFINE_string('cloud_firestore_ycsb_keyfile',
                     'serviceAccountKey.json',
                     'The path to Google API JSON private key file.')
-flags.DEFINE_string('google_firestore_projectid',
+flags.DEFINE_string('cloud_firestore_ycsb_projectid',
                     'firestore-benchmark-tests',
                     'Google Project ID with firestore instance.')
-flags.DEFINE_string('google_firestore_debug',
+flags.DEFINE_string('cloud_firestore_ycsb_debug',
                     'false',
                     'The logging level when running YCSB.')
 
@@ -66,8 +66,8 @@ def CheckPrerequisites(benchmark_config):
   Raises:
   perfkitbenchmarker.data.ResourceNotFound: On missing resource.
   """
-  if not FLAGS.google_firestore_keyfile:
-    raise ValueError('"google_firestore_keyfile" must be set')
+  if not FLAGS.cloud_firestore_ycsb_keyfile:
+    raise ValueError('"cloud_firestore_ycsb_keyfile" must be set')
 
 
 def Prepare(benchmark_spec):
@@ -96,8 +96,8 @@ def Run(benchmark_spec):
   vms = benchmark_spec.vms
   run_kwargs = {
       'googlefirestore.serviceAccountKey': PRIVATE_KEYFILE_DIR,
-      'googlefirestore.projectId': FLAGS.google_firestore_projectid,
-      'googlefirestore.debug': FLAGS.google_firestore_debug,
+      'googlefirestore.projectId': FLAGS.cloud_firestore_ycsb_projectid,
+      'googlefirestore.debug': FLAGS.cloud_firestore_ycsb_debug,
       'table': 'pkb-{0}'.format(FLAGS.run_uri),
   }
   load_kwargs = run_kwargs.copy()
@@ -114,12 +114,27 @@ def Cleanup(benchmark_spec):
   benchmark_spec: The benchmark specification. Contains all data that is
   required to run the benchmark.
   TODO: support automatic cleanup.
+  TODO: figure operation count and figure out 4000 documents/sec
   """
+  delete_collection('pkb-{}'.format(FLAGS.run_uri), 500)
   logging.warning(
       'For now, we can only manually delete all the entries via GCP portal.')
+
+
+def delete_collection(coll_name, batch_size):
+  docs = coll_name.limit(10).get()
+  deleted = 0
+
+  for doc in docs:
+    print (u'Deleting document {} = > {}'.format(doc.id, doc.to_dict()))
+    doc.reference.delete()
+    deleted = deleted +1
+
+  if deleted >= batch_size:
+    return delete_collection(coll_name, batch_size)
 
 
 def _Install(vm):
   """Install YCSB on client 'vm', and copy private key."""
   vm.Install('ycsb')
-  vm.RemoteCopy(FLAGS.google_firestore_keyfile, PRIVATE_KEYFILE_DIR)
+  vm.RemoteCopy(FLAGS.cloud_firestore_ycsb_keyfile, PRIVATE_KEYFILE_DIR)
