@@ -19,6 +19,8 @@ from perfkitbenchmarker import flags
 GCP_MIN_CPU_PLATFORM_NONE = 'none'
 
 flags.DEFINE_string('gcloud_path', 'gcloud', 'The path for the gcloud utility.')
+flags.DEFINE_string('firebasecli_path', 'firebase',
+                    'The path for the firebase utility.')
 flags.DEFINE_list('additional_gcloud_flags', [],
                   'Additional flags to pass to gcloud.')
 flags.DEFINE_integer(

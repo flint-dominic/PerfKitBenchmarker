@@ -22,58 +22,42 @@ import logging
 from perfkitbenchmarker import flags
 from perfkitbenchmarker import resource
 from perfkitbenchmarker.providers.gcp import util
-from google.cloud import firestore
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string('gcp_firestore_projectid',
                     'firestore-benchmark-tests',
                     'Google Project ID with firestore instance.')
 
-db = firestore.Client(project='random', credentials='random', database='random')
-db.collection(u'pkb-run').document(u'user-random').delete()
-
-
 
 class GcpFirestoreInstance(resource.BaseResource):
   """Object representing a GCP Firestore Instance.
 
   Attributes:
-    name: Instance and cluster name.
-    num_nodes: Number of nodes in the instance's cluster.
+    name: Collection name.
     project: Enclosing project for the instance.
     zone: zone of the instance's cluster.
   """
 
-  def __init__(self, name, num_nodes, project, zone):
+  def __init__(self, name, project, zone):
     super(GcpFirestoreInstance, self).__init__()
-    self.num_nodes = num_nodes
     self.name = name
     self.zone = zone
     self.project = project
 
   def _Create(self):
-    """Creates the instance."""
-    cmd = util.GcloudCommand(self, 'beta', 'bigtable', 'instances', 'create',
+    """Creates the key, collection is automatically created on load."""
+    cmd = util.GcloudCommand(self, 'iam', 'service-accounts', 'create',
                              self.name)
-    cmd.flags['description'] = 'PkbCreatedCluster'
-    cmd.flags['cluster'] = self.name
-    cmd.flags['cluster-num-nodes'] = str(self.num_nodes)
-    cmd.flags['cluster-zone'] = self.zone
-    cmd.flags['project'] = self.project
-    # The zone flag makes this command fail.
-    cmd.flags['zone'] = []
-    cmd.Issue()
+    cmd.flags['display-name'] = self.name
+    stdout, stderr, retcode = cmd.Issue()
 
   def _Delete(self):
-    """Deletes the instance."""
-    cmd = util.GcloudCommand(self, 'beta', 'bigtable', 'instances', 'delete',
-                             self.name)
-    # The zone flag makes this command fail.
-    cmd.flags['zone'] = []
+    """Deletes the collection."""
+    cmd = util.FirebaseCommand(self, 'firestore:delete', self.name, 'r', 'y')
     cmd.Issue()
 
   def _Exists(self):
-    """Returns true if the instance exists."""
+    """Returns true if the collection exists."""
     cmd = util.GcloudCommand(self, 'beta', 'bigtable', 'instances', 'list')
     cmd.flags['format'] = 'json'
     cmd.flags['project'] = self.project
