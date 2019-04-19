@@ -80,7 +80,7 @@ def Prepare(benchmark_spec):
   benchmark_spec.always_call_cleanup = True
 
   benchmark_spec.firestore_instance = gcp_firestore.GcpFirestoreInstance(
-      'pkb-{0}'.format(FLAGS.run_uri), FLAGS.zone[0])
+      'pkb-{0}'.format(FLAGS.run_uri), FLAGS.zones[0])
   benchmark_spec.firestore_instance.Create()
 
   vms = benchmark_spec.vms

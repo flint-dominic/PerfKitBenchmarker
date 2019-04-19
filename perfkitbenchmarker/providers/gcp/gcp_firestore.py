@@ -59,7 +59,7 @@ class GcpFirestoreInstance(resource.BaseResource):
                              'service-accounts',
                              'keys',
                              'create', FLAGS.cloud_firestore_ycsb_keyfile,
-                             '--iam-account' '{0}@{1}.iam.gserviceaccount.com'
+                             '--iam-account', '{0}@{1}.iam.gserviceaccount.com'
                              .format(self.name, FLAGS.gcp_firestore_projectid))
     stdout, stderr, retcode = cmd.Issue()
     logging.error('Unable to link role. Return code {0} '
@@ -76,7 +76,7 @@ class GcpFirestoreInstance(resource.BaseResource):
                              'service-accounts',
                              'keys',
                              'delete', FLAGS.cloud_firestore_ycsb_keyfile,
-                             '--iam-account' '{0}@{1}.iam.gserviceaccount.com'
+                             '--iam-account', '{0}@{1}.iam.gserviceaccount.com'
                              .format(self.name, FLAGS.gcp_firestore_projectid))
     stdout, stderr, retcode = cmd.Issue()
     logging.error('Unable to delete keys. Return code {0} '
