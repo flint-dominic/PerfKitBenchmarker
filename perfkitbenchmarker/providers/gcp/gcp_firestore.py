@@ -16,7 +16,6 @@
 Collections can be created and deleted.
 """
 
-import json
 import logging
 
 from perfkitbenchmarker import flags
@@ -38,41 +37,62 @@ class GcpFirestoreInstance(resource.BaseResource):
     zone: zone of the instance's cluster.
   """
 
-  def __init__(self, name, project, zone):
+  def __init__(self, name, zone):
     super(GcpFirestoreInstance, self).__init__()
     self.name = name
     self.zone = zone
-    self.project = project
+    self.project = FLAGS.gcp_firestore_projectid
 
   def _Create(self):
     """Creates the key, collection is automatically created on load."""
-    cmd = util.GcloudCommand(self, 'iam', 'service-accounts', 'create',
-                             self.name)
+    cmd = util.GcloudCommand(self,
+                             'iam',
+                             'service-accounts',
+                             'create', self.name)
     cmd.flags['display-name'] = self.name
     stdout, stderr, retcode = cmd.Issue()
+    logging.error('Unable to create service account. Return code {0} '
+                  'STDOUT: {1}\nSTDERR: {2}'.format(retcode, stdout, stderr))
+
+    cmd = util.GcloudCommand(self,
+                             'iam',
+                             'service-accounts',
+                             'keys',
+                             'create', FLAGS.cloud_firestore_ycsb_keyfile,
+                             '--iam-account' '{0}@{1}.iam.gserviceaccount.com'
+                             .format(self.name, FLAGS.gcp_firestore_projectid))
+    stdout, stderr, retcode = cmd.Issue()
+    logging.error('Unable to link role. Return code {0} '
+                  'STDOUT: {1}\nSTDERR: {2}'.format(retcode, stdout, stderr))
 
   def _Delete(self):
     """Deletes the collection."""
     cmd = util.FirebaseCommand(self, 'firestore:delete', self.name, 'r', 'y')
     cmd.Issue()
 
+    # TODO: get key-id from create
+    cmd = util.GcloudCommand(self,
+                             'iam',
+                             'service-accounts',
+                             'keys',
+                             'delete', FLAGS.cloud_firestore_ycsb_keyfile,
+                             '--iam-account' '{0}@{1}.iam.gserviceaccount.com'
+                             .format(self.name, FLAGS.gcp_firestore_projectid))
+    stdout, stderr, retcode = cmd.Issue()
+    logging.error('Unable to delete keys. Return code {0} '
+                  'STDOUT: {1}\nSTDERR: {2}'.format(retcode, stdout, stderr))
+
+    # TODO: fix quiet flag, get error if not deleted?
+    cmd = util.GcloudCommand(self,
+                             'iam',
+                             'service-accounts',
+                             'delete',
+                             '{0}@{1}.iam.gserviceaccount.com'
+                             .format(self.name, FLAGS.gcp_firestore_projectid))
+    cmd.flags['quiet']
+    stdout, stderr, retcode = cmd.Issue()
+    logging.error('Unable to delete service account. Return code {0} '
+                  'STDOUT: {1}\nSTDERR: {2}'.format(retcode, stdout, stderr))
+
   def _Exists(self):
     """Returns true if the collection exists."""
-    cmd = util.GcloudCommand(self, 'beta', 'bigtable', 'instances', 'list')
-    cmd.flags['format'] = 'json'
-    cmd.flags['project'] = self.project
-    # The zone flag makes this command fail.
-    cmd.flags['zone'] = []
-    stdout, stderr, retcode = cmd.Issue(suppress_warning=True)
-    if retcode != 0:
-      # This is not ideal, as we're returning false not because we know
-      # the table isn't there, but because we can't figure out whether
-      # it is there.  This behavior is consistent without other
-      # _Exists methods.
-      logging.error('Unable to list GCP Bigtable instances. Return code %s '
-                    'STDOUT: %s\nSTDERR: %s', retcode, stdout, stderr)
-      return False
-    result = json.loads(stdout)
-    instances = {instance['name'] for instance in result}
-    full_name = 'projects/{}/instances/{}'.format(self.project, self.name)
-    return full_name in instances

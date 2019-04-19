@@ -28,6 +28,7 @@ from perfkitbenchmarker import configs
 from perfkitbenchmarker import flags
 from perfkitbenchmarker import vm_util
 from perfkitbenchmarker.linux_packages import ycsb
+from perfkitbenchmarker.providers.gcp import gcp_firestore
 
 
 BENCHMARK_NAME = 'cloud_firestore_ycsb'
@@ -77,9 +78,12 @@ def Prepare(benchmark_spec):
       required to run the benchmark.
   """
   benchmark_spec.always_call_cleanup = True
-  vms = benchmark_spec.vms
 
-  # Install required packages and copy credential files
+  benchmark_spec.firestore_instance = gcp_firestore.GcpFirestoreInstance(
+      'pkb-{0}'.format(FLAGS.run_uri), FLAGS.zone[0])
+  benchmark_spec.firestore_instance.Create()
+
+  vms = benchmark_spec.vms
   vm_util.RunThreaded(_Install, vms)
 
   benchmark_spec.executor = ycsb.YCSBExecutor('googlefirestore')
@@ -113,25 +117,8 @@ def Cleanup(benchmark_spec):
   Args:
   benchmark_spec: The benchmark specification. Contains all data that is
   required to run the benchmark.
-  TODO: support automatic cleanup.
-  TODO: figure operation count and figure out 4000 documents/sec
   """
-  delete_collection('pkb-{}'.format(FLAGS.run_uri), 500)
-  logging.warning(
-      'For now, we can only manually delete all the entries via GCP portal.')
-
-
-def delete_collection(coll_name, batch_size):
-  docs = coll_name.limit(10).get()
-  deleted = 0
-
-  for doc in docs:
-    print (u'Deleting document {} = > {}'.format(doc.id, doc.to_dict()))
-    doc.reference.delete()
-    deleted = deleted +1
-
-  if deleted >= batch_size:
-    return delete_collection(coll_name, batch_size)
+  benchmark_spec.firestore_instance.Delete()
 
 
 def _Install(vm):
