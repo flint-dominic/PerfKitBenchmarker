@@ -67,32 +67,32 @@ class GcpFirestoreInstance(resource.BaseResource):
 
   def _Delete(self):
     """Deletes the collection."""
-    cmd = util.FirebaseCommand(self, 'firestore:delete', self.name, 'r', 'y')
+    cmd = util.FirebaseCommand(self, 'firestore:delete', self.name, '--project', self.project, '-r', '-y')
     cmd.Issue()
 
-    # TODO: get key-id from create
-    cmd = util.GcloudCommand(self,
-                             'iam',
-                             'service-accounts',
-                             'keys',
-                             'delete', FLAGS.cloud_firestore_ycsb_keyfile,
-                             '--iam-account', '{0}@{1}.iam.gserviceaccount.com'
-                             .format(self.name, FLAGS.gcp_firestore_projectid))
-    stdout, stderr, retcode = cmd.Issue()
-    logging.error('Unable to delete keys. Return code {0} '
-                  'STDOUT: {1}\nSTDERR: {2}'.format(retcode, stdout, stderr))
-
-    # TODO: fix quiet flag, get error if not deleted?
-    cmd = util.GcloudCommand(self,
-                             'iam',
-                             'service-accounts',
-                             'delete',
-                             '{0}@{1}.iam.gserviceaccount.com'
-                             .format(self.name, FLAGS.gcp_firestore_projectid))
-    cmd.flags['quiet']
-    stdout, stderr, retcode = cmd.Issue()
-    logging.error('Unable to delete service account. Return code {0} '
-                  'STDOUT: {1}\nSTDERR: {2}'.format(retcode, stdout, stderr))
+    # # TODO: get key-id from create
+    # cmd = util.GcloudCommand(self,
+    #                          'iam',
+    #                          'service-accounts',
+    #                          'keys',
+    #                          'delete', FLAGS.cloud_firestore_ycsb_keyfile,
+    #                          '--iam-account', '{0}@{1}.iam.gserviceaccount.com'
+    #                          .format(self.name, FLAGS.gcp_firestore_projectid))
+    # stdout, stderr, retcode = cmd.Issue()
+    # logging.error('Unable to delete keys. Return code {0} '
+    #               'STDOUT: {1}\nSTDERR: {2}'.format(retcode, stdout, stderr))
+    #
+    # # TODO: fix quiet flag, get error if not deleted?
+    # cmd = util.GcloudCommand(self,
+    #                          'iam',
+    #                          'service-accounts',
+    #                          'delete',
+    #                          '{0}@{1}.iam.gserviceaccount.com'
+    #                          .format(self.name, FLAGS.gcp_firestore_projectid))
+    # cmd.flags['quiet']
+    # stdout, stderr, retcode = cmd.Issue()
+    # logging.error('Unable to delete service account. Return code {0} '
+    #               'STDOUT: {1}\nSTDERR: {2}'.format(retcode, stdout, stderr))
 
   def _Exists(self):
     """Returns true if the collection exists."""

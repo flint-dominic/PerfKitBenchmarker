@@ -218,7 +218,7 @@ class FirebaseCommand(object):
     self.args = list(args)
     self.flags = OrderedDict()
     self.additional_flags = []
-    self._AddCommonFlags(resource)
+    # self._AddCommonFlags(resource)
 
   def GetCommand(self):
     cmd = [FLAGS.firebasecli_path]
@@ -244,8 +244,8 @@ class FirebaseCommand(object):
   def IssueRetryable(self, **kwargs):
     return _issue_retryable_command_function(self, **kwargs)
 
-  def _AddCommonFlags(self, resource):
-    self.flags['json']
+  # def _AddCommonFlags(self, resource):
+  #   self.flags['json']
 
 
 _QUOTA_EXCEEDED_REGEX = re.compile('Quota \'.*\' exceeded.')
