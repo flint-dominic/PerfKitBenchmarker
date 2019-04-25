@@ -47,9 +47,6 @@ FLAGS = flags.FLAGS
 flags.DEFINE_string('cloud_firestore_ycsb_keyfile',
                     'serviceAccountKey.json',
                     'The path to Google API JSON private key file.')
-flags.DEFINE_string('cloud_firestore_ycsb_projectid',
-                    'firestore-benchmark-tests',
-                    'Google Project ID with firestore instance.')
 flags.DEFINE_string('cloud_firestore_ycsb_debug',
                     'false',
                     'The logging level when running YCSB.')
@@ -81,7 +78,6 @@ def Prepare(benchmark_spec):
 
   benchmark_spec.firestore_instance = gcp_firestore.GcpFirestoreInstance(
       'pkb-{0}'.format(FLAGS.run_uri), FLAGS.zones[0])
-  # benchmark_spec.firestore_instance.Create()
 
   vms = benchmark_spec.vms
   vm_util.RunThreaded(_Install, vms)

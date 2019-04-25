@@ -213,41 +213,6 @@ class GcloudCommand(object):
     self.additional_flags.extend(FLAGS.additional_gcloud_flags or ())
 
 
-class FirebaseCommand(object):
-  def __init__(self, resource, *args):
-    self.args = list(args)
-    self.flags = OrderedDict()
-    self.additional_flags = []
-    # self._AddCommonFlags(resource)
-
-  def GetCommand(self):
-    cmd = [FLAGS.firebasecli_path]
-    cmd.extend(self.args)
-    for flag_name, values in self.flags.iteritems():
-      flag_name_str = '--{0}'.format(flag_name)
-      if values is True:
-        cmd.append(flag_name_str)
-      else:
-        values_iterable = values if isinstance(values, list) else [values]
-        for value in values_iterable:
-          cmd.append(flag_name_str)
-          cmd.append(str(value))
-    cmd.extend(self.additional_flags)
-    return cmd
-
-  def __repr__(self):
-    return '{0}({1})'.format(type(self).__name__, ' '.join(self.GetCommand()))
-
-  def Issue(self, **kwargs):
-    return _issue_command_function(self, **kwargs)
-
-  def IssueRetryable(self, **kwargs):
-    return _issue_retryable_command_function(self, **kwargs)
-
-  # def _AddCommonFlags(self, resource):
-  #   self.flags['json']
-
-
 _QUOTA_EXCEEDED_REGEX = re.compile('Quota \'.*\' exceeded.')
 _QUOTA_EXCEEDED_MESSAGE = ('Creation failed due to quota exceeded: ')
 
