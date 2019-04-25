@@ -22,8 +22,6 @@ By default, this benchmark provision 1 single-CPU VM and spawn 1 thread
 to test Firestore.
 """
 
-import logging
-
 from perfkitbenchmarker import configs
 from perfkitbenchmarker import flags
 from perfkitbenchmarker import vm_util

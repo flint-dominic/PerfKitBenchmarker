@@ -16,8 +16,6 @@
 Collections can be created and deleted.
 """
 
-import logging
-
 from perfkitbenchmarker import flags
 from perfkitbenchmarker import resource
 from perfkitbenchmarker import vm_util
@@ -38,7 +36,6 @@ class GcpFirestoreInstance(resource.BaseResource):
     project: Enclosing project for the instance.
     zone: zone of the instance's cluster.
   """
-
   def __init__(self, name, zone):
     super(GcpFirestoreInstance, self).__init__()
     self.name = name
